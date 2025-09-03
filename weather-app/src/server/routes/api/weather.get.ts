@@ -1,11 +1,11 @@
 import { defineEventHandler } from "h3";
 import { OpenMeteoWeatherSource } from "../../lib/weatherSources";
-import { OpenFeature } from "@openfeature/server-sdk";
+import { useFeatureFlags } from "../../utils/featureFlags";
 
 const openMeteoWeather = new OpenMeteoWeatherSource();
 
-export default defineEventHandler(async () => {
-  const flags = OpenFeature.getClient();
+export default defineEventHandler(async (event) => {
+  const flags = useFeatureFlags(event);
   const result = await flags.getBooleanDetails("include-forecast", false);
   console.log({ result });
   const includeForecast = result.value;
