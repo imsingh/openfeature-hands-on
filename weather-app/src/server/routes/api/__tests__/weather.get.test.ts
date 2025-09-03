@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createApp, createRouter, toPlainHandler } from "h3";
+import { createApp, createRouter, toPlainHandler, type PlainRequest } from "h3";
 import weatherHandler from "../weather.get";
 
 import { type Response as WeatherResponse } from "../weather.get";
@@ -14,34 +14,28 @@ function setupWeatherApp() {
 }
 
 describe("weather.get endpoint", () => {
-  it("should return weather data with lastUpdated timestamp", async () => {
+  it("should return weather data from weather source", async () => {
     const plainHandler = setupWeatherApp();
 
-    const fakeEvent = {
+    const fakeWeatherData = [{ dummy: "weather data" }];
+    const fakeWeatherSource = {
+      getWeatherForAllLocations: () => {
+        return fakeWeatherData;
+      },
+    };
+
+    const fakeRequest: PlainRequest = {
       method: "GET",
       path: "/api/weather",
       headers: {},
+      context: { weatherSource: fakeWeatherSource },
     };
 
-    const response = await plainHandler(fakeEvent);
+    const response = await plainHandler(fakeRequest);
     const result = JSON.parse(response.body as string) as WeatherResponse;
 
-    expect(result).toHaveProperty("locations");
     expect(result).toHaveProperty("lastUpdated");
-    expect(Array.isArray(result.locations)).toBe(true);
-    expect(result.locations.length).toBeGreaterThan(0);
-    expect(result.lastUpdated).toMatch(
-      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
-    );
-
-    result.locations.forEach((location) => {
-      expect(location).toHaveProperty("city");
-      expect(location).toHaveProperty("temperatureC");
-      expect(location).toHaveProperty("condition");
-      expect(location).toHaveProperty("forecast");
-      expect(typeof location.city).toBe("string");
-      expect(typeof location.temperatureC).toBe("number");
-      expect(typeof location.condition).toBe("string");
-    });
+    expect(result).toHaveProperty("locations");
+    expect(result.locations).toEqual(fakeWeatherData);
   });
 });

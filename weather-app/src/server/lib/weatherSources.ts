@@ -35,7 +35,11 @@ export const HARD_CODED_WEATHER_LOCATIONS: Location[] = [
   { name: "Shanghai", latitude: 31.2304, longitude: 121.4737 },
 ];
 
-export class OpenMeteoWeatherSource {
+export interface WeatherSource {
+  getWeatherForAllLocations(includeForecast: boolean): Promise<WeatherData[]>;
+}
+
+export class OpenMeteoWeatherSource implements WeatherSource {
   private getDayName(date: Date): string {
     return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()];
   }
