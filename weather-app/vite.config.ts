@@ -10,10 +10,15 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    nitro({
-      ssr: false,
-      entryServer: "src/server/main.tsx",
-    }),
+    nitro(
+      {
+        ssr: false,
+        entryServer: "src/server/main.tsx",
+      },
+      {
+        ignore: ["**/__tests__/**", "**/*.test.*", "**/*.spec.*"],
+      }
+    ),
   ],
   resolve: {
     alias: {
