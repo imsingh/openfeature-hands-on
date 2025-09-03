@@ -16,7 +16,7 @@ interface ForecastDay {
   condition: WeatherCondition;
 }
 
-interface WeatherData {
+export interface WeatherData {
   city: string;
   temperatureC: number;
   condition: WeatherCondition;
@@ -106,10 +106,11 @@ export class OpenMeteoWeatherSource {
 
     return weatherData;
   }
-
 }
 
-export function mapWeatherCodeToCondition(weatherCode: number): WeatherCondition {
+export function mapWeatherCodeToCondition(
+  weatherCode: number
+): WeatherCondition {
   // Based on WMO weather codes (https://www.nodc.noaa.gov/archive/arc0021/0002199/1.1/data/0-data/HTML/WMO-CODE/WMO4677.HTM)
 
   // Clear conditions (0-1: clear sky, no clouds)

@@ -1,10 +1,18 @@
 import { defineEventHandler } from "h3";
-import { OpenMeteoWeatherSource } from "../../lib/weatherSources";
+import {
+  OpenMeteoWeatherSource,
+  type WeatherData,
+} from "../../lib/weatherSources";
 import { useFeatureFlags } from "../../utils/featureFlags";
 
 const openMeteoWeather = new OpenMeteoWeatherSource();
 
-export default defineEventHandler(async (event) => {
+export interface Response {
+  locations: WeatherData[];
+  lastUpdated: string;
+}
+
+export default defineEventHandler(async (event): Promise<Response> => {
   const flags = useFeatureFlags(event);
   const result = await flags.getBooleanDetails("include-forecast", false);
   console.log({ result });
