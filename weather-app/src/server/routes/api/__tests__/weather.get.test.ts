@@ -16,30 +16,40 @@ function setupWeatherApp() {
 }
 
 describe("weather.get endpoint", () => {
-  it("returns weather data from weather source", async () => {
-    const plainHandler = setupWeatherApp();
+  it.for([true, false])(
+    "returns weather data from weather source [include-forecast flag: %s]",
+    async (includeForecast: boolean) => {
+      const plainHandler = setupWeatherApp();
 
-    const fakeWeatherData = [{ dummy: "weather data" }];
-    const fakeWeatherSource = {
-      getWeatherForAllLocations: () => {
-        return fakeWeatherData;
-      },
-    };
+      const fakeWeatherData = [{ dummy: "weather data" }];
+      const fakeWeatherSource = {
+        getWeatherForAllLocations: () => {
+          return fakeWeatherData;
+        },
+      };
 
-    const fakeRequest: PlainRequest = {
-      method: "GET",
-      path: "/api/weather",
-      headers: {},
-      context: { weatherSource: fakeWeatherSource },
-    };
+      const fakeRequest: PlainRequest = {
+        method: "GET",
+        path: "/api/weather",
+        headers: {},
+        context: { weatherSource: fakeWeatherSource },
+      };
 
-    const response = await plainHandler(fakeRequest);
-    const result = JSON.parse(response.body as string) as WeatherResponse;
+      const response = await withHardcodedFeatureFlag(
+        "include-forecast",
+        includeForecast,
+        async () => {
+          return plainHandler(fakeRequest);
+        }
+      );
 
-    expect(result).toHaveProperty("lastUpdated");
-    expect(result).toHaveProperty("locations");
-    expect(result.locations).toEqual(fakeWeatherData);
-  });
+      const result = JSON.parse(response.body as string) as WeatherResponse;
+
+      expect(result).toHaveProperty("lastUpdated");
+      expect(result).toHaveProperty("locations");
+      expect(result.locations).toEqual(fakeWeatherData);
+    }
+  );
 
   describe("include-forecast feature flag", () => {
     it("does not ask weather source for forecast if feature flag is off", async () => {
