@@ -1,5 +1,6 @@
 import { WeatherCard } from "@/components/WeatherCard";
 import { Header } from "@/components/Header";
+import { PromoBanner } from "@/components/PromoBanner";
 import { useCurrentWeather } from "@/lib/apiClient";
 
 export function WeatherApp() {
@@ -24,6 +25,7 @@ export function WeatherApp() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+      <PromoBanner />
 
       <main className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
