@@ -11,7 +11,6 @@ export default defineEventHandler(async (event): Promise<Response> => {
   const weatherSource = useWeatherSource(event);
   const flags = useFeatureFlags(event);
   const result = await flags.getBooleanDetails("include-forecast", false);
-  console.log({ result });
   const includeForecast = result.value;
 
   const locations = await weatherSource.getWeatherForAllLocations(
