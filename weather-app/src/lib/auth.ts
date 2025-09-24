@@ -17,7 +17,7 @@ export interface AuthState {
 }
 
 import Cookies from "js-cookie";
-import { analytics } from "./analytics";
+import { analytics } from "./fauxAnalytics";
 
 export function getCurrentUser(): User | null {
   const authCookie = Cookies.get("auth");

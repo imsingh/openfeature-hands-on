@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { useFlag } from "@openfeature/react-sdk";
-import { useJitsu } from "@jitsu/jitsu-react";
+import { analytics } from "@/lib/fauxAnalytics";
 
 interface BannerProps {
   onCTA: () => void;
@@ -86,7 +86,6 @@ export function PromoBanner() {
     "obnoxious-promo",
     true
   );
-  const { analytics } = useJitsu();
 
   // don't show a banner until we know for sure which banner we should be showing (i.e. if we haven't fetched the flag yet)
   if (!isAuthoritative) {

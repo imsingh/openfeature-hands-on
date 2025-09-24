@@ -10,7 +10,7 @@ import {
 } from "@openfeature/react-sdk";
 import { FliptWebProvider } from "@openfeature/flipt-web-provider";
 import { useAuth } from "./AuthContext";
-import { analytics } from "@/lib/analytics";
+import { analytics } from "@/lib/fauxAnalytics";
 
 class AnalyticsHook implements Hook {
   public after(
