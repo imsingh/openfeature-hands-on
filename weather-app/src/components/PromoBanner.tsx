@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { useFlag } from "@openfeature/react-sdk";
+import { useJitsu } from "@jitsu/jitsu-react";
 
 interface BannerProps {
+  onCTA: () => void;
   onDismiss: () => void;
 }
 
-function SubtleBanner({ onDismiss }: BannerProps) {
+function SubtleBanner({ onDismiss, onCTA }: BannerProps) {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
       <div className="bg-gray-50 border border-gray-200 rounded-lg">
@@ -20,9 +22,8 @@ function SubtleBanner({ onDismiss }: BannerProps) {
             </div>
 
             <div className="flex items-center space-x-3">
-              {/* TODO: Need to implement a plans page - for now just dismiss the banner */}
               <button
-                onClick={onDismiss}
+                onClick={onCTA}
                 className="text-sm text-blue-600 hover:text-blue-700 font-medium"
               >
                 Upgrade Plan
@@ -41,7 +42,7 @@ function SubtleBanner({ onDismiss }: BannerProps) {
   );
 }
 
-function ObnoxiousBanner({ onDismiss }: BannerProps) {
+function ObnoxiousBanner({ onDismiss, onCTA }: BannerProps) {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
       <div className="bg-orange-100 border-2 border-orange-400 rounded-lg">
@@ -54,9 +55,8 @@ function ObnoxiousBanner({ onDismiss }: BannerProps) {
             </div>
 
             <div className="flex items-center space-x-3">
-              {/* TODO: Need to implement a plans page - for now just dismiss the banner */}
               <button
-                onClick={onDismiss}
+                onClick={onCTA}
                 className="text-sm font-bold text-white bg-orange-600 hover:bg-orange-700 px-3 py-1 rounded"
               >
                 UPGRADE NOW
@@ -86,6 +86,7 @@ export function PromoBanner() {
     "obnoxious-promo",
     true
   );
+  const { analytics } = useJitsu();
 
   // don't show a banner until we know for sure which banner we should be showing (i.e. if we haven't fetched the flag yet)
   if (!isAuthoritative) {
@@ -96,11 +97,19 @@ export function PromoBanner() {
     return null;
   }
 
-  const handleDismiss = () => setIsVisible(false);
+  const handleDismiss = () => {
+    analytics.track("Promo Banner Dismissed");
+    setIsVisible(false);
+  };
+  const handleCTA = () => {
+    analytics.track("Promo Banner CTA Clicked");
+    // TODO: Need to implement a plans page - for now just dismiss the banner
+    setIsVisible(false);
+  };
 
   if (useObnoxiousBanner) {
-    return <ObnoxiousBanner onDismiss={handleDismiss} />;
+    return <ObnoxiousBanner onDismiss={handleDismiss} onCTA={handleCTA} />;
   }
 
-  return <SubtleBanner onDismiss={handleDismiss} />;
+  return <SubtleBanner onDismiss={handleDismiss} onCTA={handleCTA} />;
 }
