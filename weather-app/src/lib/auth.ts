@@ -17,6 +17,7 @@ export interface AuthState {
 }
 
 import Cookies from "js-cookie";
+import { analytics } from "./fauxAnalytics";
 
 export function getCurrentUser(): User | null {
   const authCookie = Cookies.get("auth");
@@ -25,7 +26,13 @@ export function getCurrentUser(): User | null {
   }
 
   try {
-    return JSON.parse(authCookie);
+    const user: User = JSON.parse(authCookie);
+    analytics.identify(user.id, {
+      email: user.email,
+      name: user.name,
+      orgId: user.org.id,
+    });
+    return user;
   } catch (error) {
     console.error("Failed to parse auth cookie:", error);
     Cookies.remove("auth");
@@ -38,5 +45,6 @@ export function loginUser(user: User): void {
 }
 
 export function logoutUser(): void {
+  analytics.reset();
   Cookies.remove("auth");
 }
