@@ -82,6 +82,16 @@ function ObnoxiousBanner({ onDismiss, onUpgrade }: BannerProps) {
 export function PromoBanner() {
   const [isVisible, setIsVisible] = useState(true);
 
+  const { value: showObnoxiousBanner, isAuthoritative } = useFlag(
+    "obnoxious-promo-banner",
+    false
+  );
+
+  if (!isAuthoritative) {
+    // We're not confident what the final flag value will be, so don't show anything yet.
+    return null;
+  }
+
   if (!isVisible) {
     return null;
   }
@@ -95,5 +105,11 @@ export function PromoBanner() {
     setIsVisible(false);
   };
 
-  return <SubtleBanner onDismiss={handleDismiss} onUpgrade={handleUpgrade} />;
+  if (showObnoxiousBanner) {
+    return (
+      <ObnoxiousBanner onDismiss={handleDismiss} onUpgrade={handleUpgrade} />
+    );
+  } else {
+    return <SubtleBanner onDismiss={handleDismiss} onUpgrade={handleUpgrade} />;
+  }
 }
