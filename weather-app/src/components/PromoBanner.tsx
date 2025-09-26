@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { useFlag } from "@openfeature/react-sdk";
+import { analytics } from "../lib/fauxAnalytics";
 
 interface BannerProps {
   onDismiss: () => void;
@@ -97,10 +98,12 @@ export function PromoBanner() {
   }
 
   const handleDismiss = () => {
+    analytics.track("Promo Banner - Dismissed");
     setIsVisible(false);
   };
 
   const handleUpgrade = () => {
+    analytics.track("Promo Banner - Upgrade Clicked");
     // TODO: actually show the upgrade page. For now we'll just dismiss the banner.
     setIsVisible(false);
   };
